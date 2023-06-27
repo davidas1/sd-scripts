@@ -1,6 +1,7 @@
 import argparse
 import json
 from pathlib import Path
+import traceback
 from typing import List
 from tqdm import tqdm
 import library.train_util as train_util
@@ -27,18 +28,21 @@ def main(args):
   print("merge caption texts to metadata json.")
   for image_path in tqdm(image_paths):
     caption_path = image_path.with_suffix(args.caption_extension)
-    caption = caption_path.read_text(encoding='utf-8').strip()
+    # if not os.path.exists(caption_path):
+    #   caption_path = os.path.join(image_path, args.caption_extension)
 
-    if not os.path.exists(caption_path):
-      caption_path = os.path.join(image_path, args.caption_extension)
+    try:
+      caption = caption_path.read_text(encoding='utf-8').strip()
 
-    image_key = str(image_path) if args.full_path else image_path.stem
-    if image_key not in metadata:
-      metadata[image_key] = {}
+      image_key = str(image_path) if args.full_path else image_path.stem
+      if image_key not in metadata:
+        metadata[image_key] = {}
 
-    metadata[image_key]['caption'] = caption
-    if args.debug:
-      print(image_key, caption)
+      metadata[image_key]['caption'] = caption
+      if args.debug:
+        print(image_key, caption)
+    except:
+      traceback.print_exc()
 
   # metadataを書き出して終わり
   print(f"writing metadata: {args.out_json}")

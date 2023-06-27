@@ -1,0 +1,24 @@
+
+
+# merge .caption files to single json metadata file
+PYTHONPATH=~/dev/sd-scripts/ python finetune/merge_captions_to_metadata.py --full_path /fsx/data/stable_diffusion/ft_humans/images/ /fsx/data/stable_diffusion/ft_humans/unsplash_cap.json
+# merge .txt files to json metadata file
+PYTHONPATH=~/dev/sd-scripts/ python finetune/merge_dd_tags_to_metadata.py --full_path /fsx/data/stable_diffusion/ft_humans/images/ --in_json /fsx/data/stable_diffusion/ft_humans/unsplash_cap.json /fsx/data/stable_diffusion/ft_humans/unsplash_cap_tags.json
+
+PYTHONPATH=~/dev/sd-scripts/ python finetune/merge_captions_to_metadata.py --full_path /fsx/data/stable_diffusion/ft_humans/getty_images/ /fsx/data/stable_diffusion/ft_humans/getty_cap.json
+PYTHONPATH=~/dev/sd-scripts/ python finetune/merge_dd_tags_to_metadata.py --full_path /fsx/data/stable_diffusion/ft_humans/getty_images/ --in_json /fsx/data/stable_diffusion/ft_humans/getty_cap.json /fsx/data/stable_diffusion/ft_humans/getty_cap_tags.json
+
+accelerate launch --num_cpu_threads_per_process 1 train_network.py \
+--config /home/ubuntu/dev/sd-scripts/configs/config.toml \
+--dataset_config /home/ubuntu/dev/sd-scripts/configs/dataset_config.toml
+
+DELETED IMAGES:
+1073253576
+1414979934
+1073552072
+1400832939
+956151356
+1417406929
+1193139730
+1395499813
+1414978550

@@ -1451,7 +1451,7 @@ def debug_dataset(train_dataset, show_input_ids=False):
 
         steps = (epoch - 1) * len(train_dataset) + 1
         indices = list(range(len(train_dataset)))
-        random.shuffle(indices)
+        # random.shuffle(indices)
 
         k = 0
         for i, idx in enumerate(indices):
@@ -1862,7 +1862,7 @@ def replace_unet_modules(unet: diffusers.models.unet_2d_condition.UNet2DConditio
     if mem_eff_attn:
         replace_unet_cross_attn_to_memory_efficient()
     elif xformers:
-        replace_unet_cross_attn_to_xformers()
+        replace_unet_cross_attn_to_xformers(unet)
 
 
 def replace_unet_cross_attn_to_memory_efficient():
@@ -1905,7 +1905,7 @@ def replace_unet_cross_attn_to_memory_efficient():
     diffusers.models.attention.CrossAttention.forward = forward_flash_attn
 
 
-def replace_unet_cross_attn_to_xformers():
+def replace_unet_cross_attn_to_xformers(unet):
     print("CrossAttention.forward has been replaced to enable xformers.")
     try:
         import xformers.ops
@@ -1945,7 +1945,13 @@ def replace_unet_cross_attn_to_xformers():
         out = self.to_out[1](out)
         return out
 
-    diffusers.models.attention.CrossAttention.forward = forward_xformers
+    print("diffusers version:", diffusers.__version__)
+    if diffusers.__version__ >= "0.11.0":
+        # let xformer to decide witch ops is more suitable, reference _dispatch_fwd in xformers.ops
+        unet.enable_xformers_memory_efficient_attention()
+    elif hasattr(diffusers.models.attention, "CrossAttention") and \
+        hasattr(diffusers.models.attention.CrossAttention, "forward"):
+        diffusers.models.attention.CrossAttention.forward = forward_xformers
 
 
 """

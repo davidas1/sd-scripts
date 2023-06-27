@@ -682,8 +682,14 @@ def train(args):
 
                 accelerator.backward(loss)
                 if accelerator.sync_gradients and args.max_grad_norm != 0.0:
-                    params_to_clip = network.get_trainable_params()
-                    accelerator.clip_grad_norm_(params_to_clip, args.max_grad_norm)
+                    if train_text_encoder and train_unet:
+                        # 1 / sqrt(2) because we are clipping two different gradients
+                        clip_factor = args.max_grad_norm * (2 ** -0.5)
+                        accelerator.clip_grad_norm_(text_encoder.parameters(), clip_factor)
+                        accelerator.clip_grad_norm_(unet.parameters(), clip_factor)
+                    else:
+                        params_to_clip = network.get_trainable_params()
+                        accelerator.clip_grad_norm_(params_to_clip, args.max_grad_norm)
 
                 optimizer.step()
                 lr_scheduler.step()

@@ -1,0 +1,27 @@
+[general]
+enable_bucket = true     
+min_bucket_reso = 576
+max_bucket_reso = 1024
+bucket_no_upscale = false
+shuffle_caption = true
+caption_dropout_rate = 0.1
+caption_tag_dropout_rate = 0.5
+
+# This is a fine-tuning-style dataset
+[[datasets]]
+resolution = 768
+
+#  [[datasets.subsets]]
+#  image_dir = '/fsx/data/stable_diffusion/ft_humans/few_images/'
+#  metadata_file = '/fsx/data/stable_diffusion/ft_humans/test_cap_tags.json'
+#  flip_aug = true
+
+  [[datasets.subsets]]
+  image_dir = '/fsx/data/stable_diffusion/ft_humans/images/'
+  metadata_file = '/fsx/data/stable_diffusion/ft_humans/unsplash_cap_tags.json'
+  flip_aug = true
+
+  [[datasets.subsets]]
+  image_dir = '/fsx/data/stable_diffusion/ft_humans/getty_images/'
+  metadata_file = '/fsx/data/stable_diffusion/ft_humans/getty_cap_tags.json'
+  flip_aug = true

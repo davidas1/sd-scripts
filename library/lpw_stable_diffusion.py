@@ -479,7 +479,7 @@ class StableDiffusionLongPromptWeightingPipeline(StableDiffusionPipeline):
             feature_extractor=feature_extractor,
             requires_safety_checker=requires_safety_checker,
         )
-        self.clip_skip = clip_skip
+        self.register_modules(clip_skip=clip_skip)
         self.__init__additional__()
 
     # else:

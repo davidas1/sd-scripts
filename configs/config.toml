@@ -1,0 +1,57 @@
+[model_arguments]
+pretrained_model_name_or_path = "/fsx/data/models/stable-diffusion_1-5/"
+v_parameterization = false
+
+[additional_network_arguments]
+learning_rate = 1e-5
+unet_lr = 1e-5
+text_encoder_lr = 1e-6
+network_module = "networks.lora"
+network_dim = 64
+network_alpha = 32
+network_args = ["conv_dim=4", "conv_alpha=1"]
+
+[optimizer_arguments]
+optimizer_type = "AdamW8bit"
+lr_scheduler = "cosine_with_restarts"
+lr_scheduler_num_cycles = 1
+lr_warmup_steps = 100  # 0.5% of the total steps
+
+[dataset_arguments]
+cache_latents = false
+cache_latents_to_disk = false
+debug_dataset = false
+# vae_batch_size = 16
+
+[training_arguments]
+vae = "stabilityai/sd-vae-ft-mse"
+output_dir = "/fsx/data/stable_diffusion/ft_humans/run/output"
+logging_dir = "/fsx/data/stable_diffusion/ft_humans/run/log"
+output_name = "unsplash"
+max_train_steps = 20000
+save_last_n_steps = 20000
+save_every_n_steps = 100
+train_batch_size = 4
+max_token_length = 75
+noise_offset = 0.05
+seed = 42
+xformers = true
+gradient_checkpointing = false
+gradient_accumulation_steps = 1
+max_data_loader_n_workers = 8
+persistent_data_loader_workers = true
+save_precision = "fp16"
+mixed_precision = "fp16"
+# mixed_precision = "fp16"
+network_train_unet_only = true
+
+[sample_prompt_arguments]
+sample_every_n_steps = 100
+sample_prompts = "/fsx/data/stable_diffusion/ft_humans/sample_prompts.txt"
+sample_sampler = "dpmsolver++"
+
+[dreambooth_arguments]
+prior_loss_weight = 1.0
+
+[saving_arguments]
+save_model_as = "safetensors"
